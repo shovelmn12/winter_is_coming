@@ -39,12 +39,14 @@ fun main() {
             if (it == 0) {
                 Observable.empty()
             } else {
+                // update every 2 seconds
                 Observable.interval(2, TimeUnit.SECONDS)
                     .withLatestFrom(gameSubject)
                     .map { (_, game) -> game }
             }
         }
         .subscribe {
+            // send move event
             eventsSubject.onNext(Event.Move)
         }
 
