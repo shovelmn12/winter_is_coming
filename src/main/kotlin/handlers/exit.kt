@@ -1,6 +1,7 @@
 package handlers
 
 import extensions.notify
+import models.Event
 import models.Game
 import models.Player
 
@@ -21,10 +22,16 @@ fun exitHandler(game: Game, player: Player.Human?): Pair<Game?, GameNotifier>? =
             players = game.players.filter { it.key != player.id },
         )
 
-        if (next.players.isEmpty()) {
-            Pair(null) {}
-        } else {
-            Pair(next) {
+        Pair(next) {
+            // if no players left stop the game
+            if (next.players.isEmpty()) {
+                it(
+                    Event.Stop(
+                        player.id,
+                        player.session,
+                    ),
+                )
+            } else {
                 game.players.values.forEach {
                     it.session.notify("${player.name} EXIT THE GAME")
                 }
